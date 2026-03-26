@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JalRakshak — Smart Water Guardian</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f6f8;
+  --white: #ffffff;
+  --surface: #ffffff;
+  --surface2: #f0f3f7;
+  --border: #e2e8f0;
+  --border2: #cbd5e1;
+  --blue: #1d6fa4;
+  --blue-light: #e8f4fd;
+  --blue-mid: #3b93cc;
+  --teal: #0d9488;
+  --teal-light: #e6faf8;
+  --warn: #d97706;
+  --warn-light: #fef3c7;
+  --danger: #dc2626;
+  --danger-light: #fef2f2;
+  --green: #16a34a;
+  --green-light: #f0fdf4;
+  --text: #1e293b;
+  --text-mid: #475569;
+  --text-soft: #94a3b8;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ======== NAVBAR ======== */
+nav {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+  padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px;
+  box-shadow: var(--shadow-sm);
+}
+
+.logo {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.logo-icon {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, #1d6fa4, #3b93cc);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(29,111,164,0.3);
+}
+
+.logo-name {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--blue);
+  letter-spacing: -0.3px;
+}
+
+.logo-tag {
+  font-size: 0.62rem;
+  color: var(--text-soft);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.nav-tabs {
+  display: flex; gap: 2px;
+}
+
+.nav-tab {
+  background: none; border: none;
+  color: var(--text-mid);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.83rem; font-weight: 500;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.nav-tab:hover { background: var(--surface2); color: var(--text); }
+.nav-tab.active { background: var(--blue-light); color: var(--blue); font-weight: 600; }
+
+.nav-right {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.live-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--green-light);
+  border: 1px solid #bbf7d0;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 0.7rem; font-weight: 600;
+  color: var(--green);
+  font-family: 'DM Mono', monospace;
+}
+
+.live-pill::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: blink 1.4s infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.alert-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--danger-light);
+  border: 1px solid #fecaca;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 0.72rem; font-weight: 600;
+  color: var(--danger);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.alert-pill:hover { background: #fee2e2; }
+
+/* ======== MAIN ======== */
+main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* ======== PAGE HEADER ======== */
+.page-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.page-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.6rem; font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+
+.page-sub {
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  margin-top: 3px;
+}
+
+/* ======== STATS ROW ======== */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s;
+}
+
+.stat-card:hover { box-shadow: var(--shadow); }
+
+.stat-label {
+  font-size: 0.7rem;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.stat-val {
+  font-family: 'Fraunces', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.stat-val.blue   { color: var(--blue); }
+.stat-val.teal   { color: var(--teal); }
+.stat-val.warn   { color: var(--warn); }
+.stat-val.danger { color: var(--danger); }
+.stat-val.green  { color: var(--green); }
+
+.stat-note { font-size: 0.72rem; color: var(--text-soft); }
+
+/* ======== CARDS ======== */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text);
+}
+
+.card-meta {
+  font-size: 0.72rem;
+  color: var(--text-soft);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ======== GRID ======== */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+
+/* ======== SIM PANEL ======== */
+.sim-bar {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.25rem;
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.sim-label {
+  font-size: 0.72rem; font-weight: 600;
+  color: var(--text-soft);
+  text-transform: uppercase; letter-spacing: 1px;
+}
+
+select {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer; outline: none;
+  transition: border-color 0.15s;
+}
+
+select:focus { border-color: var(--blue-mid); }
+
+/* ======== BUTTONS ======== */
+.btn {
+  padding: 7px 16px;
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem; font-weight: 600;
+  cursor: pointer; border: none;
+  transition: all 0.15s;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+
+.btn-blue { background: var(--blue); color: white; }
+.btn-blue:hover { background: #1558861; filter: brightness(1.1); }
+
+.btn-outline {
+  background: white;
+  border: 1px solid var(--border2);
+  color: var(--text-mid);
+}
+.btn-outline:hover { border-color: var(--blue-mid); color: var(--blue); }
+
+.btn-green { background: var(--green); color: white; }
+.btn-green:hover { filter: brightness(1.1); }
+
+.btn-warn { background: var(--warn); color: white; }
+.btn-warn:hover { filter: brightness(1.1); }
+
+.btn-danger { background: var(--danger); color: white; }
+.btn-danger:hover { filter: brightness(1.1); }
+
+.btn-ghost {
+  background: var(--surface2);
+  color: var(--text-mid);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { background: var(--border); }
+
+.btn-sm { padding: 5px 10px; font-size: 0.75rem; }
+
+/* ======== ZONE BARS ======== */
+.zone-list { display: flex; flex-direction: column; gap: 0.85rem; }
+
+.zone-item { display: flex; flex-direction: column; gap: 5px; }
+
+.zone-row {
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.zone-name { font-size: 0.83rem; font-weight: 500; color: var(--text); }
+
+.zone-nums {
+  display: flex; gap: 10px; align-items: center;
+  font-size: 0.72rem; font-family: 'DM Mono', monospace;
+  color: var(--text-soft);
+}
+
+.badge {
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.65rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.badge-normal { background: var(--teal-light); color: var(--teal); }
+.badge-warn   { background: var(--warn-light); color: var(--warn); }
+.badge-danger { background: var(--danger-light); color: var(--danger); animation: flashBadge 1s infinite; }
+.badge-solved    { background: var(--green-light); color: var(--green); }
+.badge-pending   { background: #f1f5f9; color: var(--text-soft); }
+.badge-not_solved{ background: var(--warn-light); color: var(--warn); }
+.badge-invalid   { background: #f8fafc; color: var(--text-soft); border: 1px solid var(--border); }
+
+@keyframes flashBadge { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+.bar-track {
+  height: 5px;
+  background: var(--surface2);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.8s ease;
+}
+
+.bar-normal { background: linear-gradient(90deg, var(--teal), #14b8a6); }
+.bar-warn   { background: linear-gradient(90deg, #f59e0b, var(--warn)); }
+.bar-danger { background: linear-gradient(90deg, #ef4444, var(--danger)); }
+
+/* ======== ALERTS LIST ======== */
+.alert-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.alert-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0.85rem 1rem;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s;
+  border-left: 3px solid;
+}
+
+.alert-row:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+
+.alert-row.danger { border-left-color: var(--danger); }
+.alert-row.warn   { border-left-color: var(--warn); }
+.alert-row.info   { border-left-color: var(--blue-mid); }
+
+.alert-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+.alert-body { flex: 1; min-width: 0; }
+.alert-title { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+.alert-desc  { font-size: 0.72rem; color: var(--text-soft); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.alert-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.alert-time  { font-size: 0.65rem; color: var(--text-soft); font-family: 'DM Mono', monospace; }
+
+/* ======== MAP ======== */
+.map-wrap {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  height: 280px;
+  position: relative;
+}
+
+.map-tooltip {
+  position: absolute;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.76rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+  box-shadow: var(--shadow);
+  min-width: 150px;
+}
+
+.map-tooltip.show { opacity: 1; }
+.map-legend { display: flex; gap: 1rem; margin-top: 0.6rem; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.72rem; color: var(--text-mid); }
+.legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+/* ======== MODAL ======== */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(15,23,42,0.45);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: none; align-items: center; justify-content: center;
+}
+
+.overlay.show { display: flex; }
+
+.modal {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 2rem;
+  width: 480px;
+  max-width: 95vw;
+  box-shadow: var(--shadow-lg);
+  animation: modalIn 0.25s ease;
+}
+
+@keyframes modalIn {
+  from { opacity:0; transform: scale(0.95) translateY(10px); }
+  to   { opacity:1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.modal-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--text);
+}
+
+.modal-close {
+  background: var(--surface2); border: none;
+  width: 28px; height: 28px; border-radius: 6px;
+  cursor: pointer; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-mid); transition: background 0.15s;
+}
+
+.modal-close:hover { background: var(--border); }
+
+.modal-body { margin-bottom: 1.5rem; }
+
+.info-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0.75rem; margin-bottom: 1.25rem;
+}
+
+.info-item {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+}
+
+.info-label {
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-soft); font-weight: 600; margin-bottom: 3px;
+}
+
+.info-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.9rem; font-weight: 500;
+  color: var(--text);
+}
+
+.modal-divider {
+  height: 1px; background: var(--border); margin: 1.25rem 0;
+}
+
+.modal-section-label {
+  font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--text-soft); margin-bottom: 0.75rem;
+}
+
+.status-btns {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem;
+}
+
+.status-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 0.85rem 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 2px solid;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem; font-weight: 600;
+  transition: all 0.15s;
+  background: white;
+}
+
+.status-btn .sb-icon { font-size: 1.4rem; }
+
+.status-btn.sb-solved {
+  border-color: #bbf7d0; color: var(--green);
+}
+.status-btn.sb-solved:hover, .status-btn.sb-solved.active {
+  background: var(--green-light); border-color: var(--green);
+}
+
+.status-btn.sb-not_solved {
+  border-color: #fed7aa; color: var(--warn);
+}
+.status-btn.sb-not_solved:hover, .status-btn.sb-not_solved.active {
+  background: var(--warn-light); border-color: var(--warn);
+}
+
+.status-btn.sb-invalid {
+  border-color: var(--border2); color: var(--text-soft);
+}
+.status-btn.sb-invalid:hover, .status-btn.sb-invalid.active {
+  background: var(--surface2); border-color: var(--text-soft);
+}
+
+/* ======== TABLE ======== */
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+
+th {
+  text-align: left; padding: 0.6rem 1rem;
+  color: var(--text-soft);
+  font-size: 0.68rem; text-transform: uppercase;
+  letter-spacing: 1px; font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+
+th:first-child { border-radius: 8px 0 0 0; }
+th:last-child  { border-radius: 0 8px 0 0; }
+
+td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #fafbfc; }
+
+/* ======== TOAST ======== */
+#toasts {
+  position: fixed; top: 70px; right: 1.5rem;
+  z-index: 999;
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.toast {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  min-width: 270px; max-width: 320px;
+  display: flex; gap: 10px; align-items: flex-start;
+  box-shadow: var(--shadow-lg);
+  animation: toastIn 0.3s ease;
+}
+
+@keyframes toastIn { from{opacity:0;transform:translateX(16px)} to{opacity:1;transform:translateX(0)} }
+
+.toast.t-danger { border-left: 3px solid var(--danger); }
+.toast.t-warn   { border-left: 3px solid var(--warn);   }
+.toast.t-green  { border-left: 3px solid var(--green);  }
+.toast.t-blue   { border-left: 3px solid var(--blue-mid); }
+
+.toast-icon { font-size: 1.1rem; }
+.toast-title { font-size: 0.8rem; font-weight: 600; margin-bottom: 2px; }
+.toast-msg   { font-size: 0.7rem; color: var(--text-soft); line-height: 1.4; }
+
+/* ======== SETTINGS ======== */
+.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-group { margin-bottom: 1rem; }
+.form-label { display: block; font-size: 0.72rem; font-weight: 600; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; }
+
+input[type="text"], input[type="number"], input[type="email"], input[type="password"] {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  outline: none; transition: border-color 0.15s;
+}
+
+input:focus { border-color: var(--blue-mid); background: white; }
+
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.7rem 0; border-bottom: 1px solid var(--border);
+}
+
+.toggle-row:last-child { border-bottom: none; }
+.toggle-name { font-size: 0.85rem; font-weight: 500; }
+.toggle-desc { font-size: 0.72rem; color: var(--text-soft); margin-top: 2px; }
+
+.toggle {
+  width: 40px; height: 22px; border-radius: 100px;
+  background: var(--border2); cursor: pointer;
+  position: relative; transition: background 0.25s; flex-shrink: 0;
+  border: none;
+}
+
+.toggle.on { background: var(--blue); }
+
+.toggle::after {
+  content: ''; position: absolute;
+  top: 3px; left: 3px;
+  width: 16px; height: 16px;
+  background: white; border-radius: 50%;
+  transition: transform 0.25s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle.on::after { transform: translateX(18px); }
+
+.sms-status {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 0.7rem; font-weight: 600;
+  font-family: 'DM Mono', monospace;
+}
+
+.sms-status.configured { background: var(--green-light); color: var(--green); border: 1px solid #bbf7d0; }
+.sms-status.not-configured { background: var(--surface2); color: var(--text-soft); border: 1px solid var(--border); }
+
+.sms-log-box {
+  margin-top: 1rem;
+  background: #1e293b;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  max-height: 130px; overflow-y: auto;
+  display: none;
+}
+
+.sms-log-line {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  padding: 2px 0;
+}
+
+canvas { display: block; }
+.time-axis { display: flex; justify-content: space-between; margin-top: 4px; font-size: 0.6rem; color: var(--text-soft); font-family: 'DM Mono', monospace; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--surface2); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+@media (max-width: 900px) {
+  .stats-row { grid-template-columns: repeat(3,1fr); }
+  .grid-2, .grid-3, .settings-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">💧</div>
+    <div>
+      <div class="logo-name">JalRakshak</div>
+      <div class="logo-tag">Chandigarh Water Grid</div>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('dashboard',this)">Dashboard</button>
+    <button class="nav-tab" onclick="showPage('areas',this)">Zones</button>
+    <button class="nav-tab" onclick="showPage('alerts',this)">Alerts</button>
+    <button class="nav-tab" onclick="showPage('reports',this)">Reports</button>
+    <button class="nav-tab" onclick="showPage('settings',this)">Settings</button>
+  </div>
+
+  <div class="nav-right">
+    <div class="live-pill">LIVE</div>
+    <div class="alert-pill" id="alert-pill" onclick="showPage('alerts',document.querySelectorAll('.nav-tab')[2])">
+      🔔 <span id="alert-count">0 Alerts</span>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text-soft)" id="live-time"></div>
+  </div>
+</nav>
+
+<div id="toasts"></div>
+
+<!-- ALERT MODAL -->
+<div class="overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="alert-modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title">Alert Details</div>
+        <div style="font-size:0.72rem;color:var(--text-soft);margin-top:3px" id="modal-time"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="info-grid" id="modal-info"></div>
+
+      <div class="modal-divider"></div>
+
+      <div class="modal-section-label">Update Alert Status</div>
+      <div class="status-btns">
+        <button class="status-btn sb-solved" onclick="updateStatus('solved')">
+          <span class="sb-icon">✅</span>
+          Problem Solved
+        </button>
+        <button class="status-btn sb-not_solved" onclick="updateStatus('not_solved')">
+          <span class="sb-icon">⚠️</span>
+          Not Solved
+        </button>
+        <button class="status-btn sb-invalid" onclick="updateStatus('invalid')">
+          <span class="sb-icon">❌</span>
+          Invalid
+        </button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="page active" id="page-dashboard">
+
+  <div class="page-header">
+    <div>
+      <div class="page-title">Water Monitor</div>
+      <div class="page-sub" id="dash-sub">Loading...</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline" onclick="loadDashboard()">↻ Refresh</button>
+      <button class="btn btn-blue" onclick="triggerAnomaly()">⚡ Simulate Leak</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Active Alerts</div>
+      <div class="stat-val danger" id="s-pending">—</div>
+      <div class="stat-note">Pending review</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Solved</div>
+      <div class="stat-val green" id="s-solved">—</div>
+      <div class="stat-note">Problems fixed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Not Solved</div>
+      <div class="stat-val warn" id="s-not">—</div>
+      <div class="stat-note">Need attention</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Invalid</div>
+      <div class="stat-val" style="color:var(--text-soft)" id="s-invalid">—</div>
+      <div class="stat-note">False alarms</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">SMS Sent</div>
+      <div class="stat-val blue" id="s-sms">—</div>
+      <div class="stat-note">Via Twilio</div>
+    </div>
+  </div>
+
+  <!-- Simulate bar -->
+  <div class="sim-bar">
+    <span class="sim-label">🎮 Simulate</span>
+    <select id="sim-area">
+      <option>Sector 17</option><option>Sector 22</option><option>Sector 35</option>
+      <option>Sector 43</option><option>Manimajra</option><option>Industrial Area</option>
+      <option>Sector 8</option><option>Sector 11</option><option>Panchkula</option>
+      <option>Mohali</option><option>Sector 26</option><option>Sector 30</option>
+    </select>
+    <select id="sim-time">
+      <option value="6AM-12PM">Morning (6AM–12PM)</option>
+      <option value="12PM-9PM">Afternoon (12PM–9PM)</option>
+      <option value="9PM-6AM" selected>Night (9PM–6AM)</option>
+    </select>
+    <select id="sim-severity">
+      <option value="warn">⚠️ Warning (+50%)</option>
+      <option value="danger" selected>🚨 Critical (+200%)</option>
+    </select>
+    <button class="btn btn-blue" onclick="triggerAnomaly()">Trigger</button>
+    <span style="font-size:0.72rem;color:var(--text-soft);margin-left:auto">Click an alert to manage status →</span>
+  </div>
+
+  <div class="grid-3">
+    <!-- Chart -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">24-Hour Usage Pattern</div>
+        <div class="card-meta">Liters / hour</div>
+      </div>
+      <canvas id="usageChart" height="190"></canvas>
+      <div class="time-axis">
+        <span>12AM</span><span>3AM</span><span>6AM</span><span>9AM</span>
+        <span>12PM</span><span>3PM</span><span>6PM</span><span>9PM</span><span>11PM</span>
+      </div>
+    </div>
+
+    <!-- Recent alerts -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Recent Alerts</div>
+        <button class="btn btn-outline btn-sm" onclick="showPage('alerts',document.querySelectorAll('.nav-tab')[2])">All →</button>
+      </div>
+      <div class="alert-list" id="mini-alerts">
+        <div style="text-align:center;color:var(--text-soft);padding:2rem;font-size:0.82rem">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zone bars + Map -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Zone Usage</div>
+        <div class="card-meta" id="zone-mode-label">—</div>
+      </div>
+      <div class="zone-list" id="zone-bars"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">City Zone Map</div>
+        <div class="card-meta">Hover for details</div>
+      </div>
+      <div class="map-wrap">
+        <svg width="100%" height="100%" viewBox="0 0 500 270" id="city-map"></svg>
+        <div class="map-tooltip" id="map-tip"></div>
+      </div>
+      <div class="map-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#0d9488;opacity:0.6"></div>Normal</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#d97706;opacity:0.6"></div>Warning</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#dc2626;opacity:0.6"></div>Critical</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ZONES PAGE ===== -->
+<div class="page" id="page-areas">
+  <div class="page-header">
+    <div>
+      <div class="page-title">All Zones</div>
+      <div class="page-sub">Area-wise baseline & current usage</div>
+    </div>
+    <button class="btn btn-outline" onclick="loadZones()">↻ Refresh</button>
+  </div>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Zone</th>
+          <th>Morning Baseline</th>
+          <th>Afternoon Baseline</th>
+          <th>Night Baseline</th>
+          <th>Current Usage</th>
+          <th>Last Updated</th>
+        </tr>
+      </thead>
+      <tbody id="zones-tbody">
+        <tr><td colspan="6" style="text-align:center;color:var(--text-soft);padding:2rem">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== ALERTS PAGE ===== -->
+<div class="page" id="page-alerts">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Alert Center</div>
+      <div class="page-sub">Click any alert to manage its status</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <select id="filter-status" onchange="loadAlerts()">
+        <option value="">All Alerts</option>
+        <option value="pending">Pending</option>
+        <option value="solved">Solved</option>
+        <option value="not_solved">Not Solved</option>
+        <option value="invalid">Invalid</option>
+      </select>
+      <button class="btn btn-outline" onclick="loadAlerts()">↻ Refresh</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="alert-list" id="all-alerts" style="max-height:600px;overflow-y:auto">
+      <div style="text-align:center;color:var(--text-soft);padding:2rem">Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== REPORTS PAGE ===== -->
+<div class="page" id="page-reports">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Reports</div>
+      <div class="page-sub">Historical data from database</div>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-bottom:1rem">
+    <div class="card">
+      <div class="card-head"><div class="card-title">Status Breakdown</div></div>
+      <canvas id="statusChart" height="200"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Alert Summary</div></div>
+      <div id="report-summary" style="display:flex;flex-direction:column;gap:0.75rem;font-size:0.85rem"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">All Historical Alerts</div>
+      <div class="card-meta" id="report-count"></div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Zone</th><th>Time Slot</th><th>Detected</th><th>Baseline</th><th>Deviation</th><th>Severity</th><th>Status</th><th>SMS</th><th>Date</th></tr>
+      </thead>
+      <tbody id="report-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== SETTINGS PAGE ===== -->
+<div class="page" id="page-settings">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Settings</div>
+      <div class="page-sub">Configure SMS, thresholds and notifications</div>
+    </div>
+  </div>
+  <div class="settings-grid">
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">📱 SMS Configuration</div>
+        <div class="sms-status not-configured" id="sms-status-badge">⚙️ Not Set</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your Mobile Number</label>
+        <input type="text" id="sms-to" placeholder="+919876543210">
+        <div style="font-size:0.68rem;color:var(--text-soft);margin-top:4px">+91 phir 10 digit number</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Twilio Account SID</label>
+        <input type="text" id="twilio-sid" placeholder="ACxxxxxxxxxxxxxxxx">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Twilio Auth Token</label>
+        <input type="password" id="twilio-token" placeholder="••••••••••••">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Twilio Phone Number</label>
+        <input type="text" id="twilio-from" placeholder="+1xxxxxxxxxx">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Backend Server URL</label>
+        <input type="text" id="backend-url" value="http://localhost:3001">
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-blue" onclick="saveSmsConfig()">💾 Save</button>
+        <button class="btn btn-outline" onclick="testSms()">📤 Test SMS</button>
+      </div>
+      <div class="sms-log-box" id="sms-log">
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:#64748b;margin-bottom:4px">// SMS LOG</div>
+        <div id="sms-log-lines"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">Alert Thresholds</div></div>
+      <div class="form-group">
+        <label class="form-label">Warning Threshold (%)</label>
+        <input type="number" value="50">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Critical Threshold (%)</label>
+        <input type="number" value="100">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Detection Window (minutes)</label>
+        <input type="number" value="15">
+      </div>
+      <button class="btn btn-blue" onclick="toast('green','✅ Saved','Thresholds updated.')">Save Thresholds</button>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">Notifications</div></div>
+      <div class="toggle-row">
+        <div><div class="toggle-name">SMS Alerts</div><div class="toggle-desc">Send SMS on anomaly detect</div></div>
+        <button class="toggle on" onclick="this.classList.toggle('on')"></button>
+      </div>
+      <div class="toggle-row">
+        <div><div class="toggle-name">Critical Only</div><div class="toggle-desc">SMS only for critical alerts</div></div>
+        <button class="toggle" onclick="this.classList.toggle('on')"></button>
+      </div>
+      <div class="toggle-row">
+        <div><div class="toggle-name">Auto Refresh</div><div class="toggle-desc">Auto reload alerts every 30s</div></div>
+        <button class="toggle on" onclick="this.classList.toggle('on')"></button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">System Info</div></div>
+      <div style="display:flex;flex-direction:column;gap:0.75rem;font-size:0.83rem">
+        <div style="display:flex;justify-content:space-between;padding-bottom:0.6rem;border-bottom:1px solid var(--border)">
+          <span style="color:var(--text-soft)">Version</span>
+          <span style="font-family:'DM Mono',monospace">v2.0.0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding-bottom:0.6rem;border-bottom:1px solid var(--border)">
+          <span style="color:var(--text-soft)">Database</span>
+          <span style="color:var(--teal)">SQLite ✓</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding-bottom:0.6rem;border-bottom:1px solid var(--border)">
+          <span style="color:var(--text-soft)">Backend</span>
+          <span id="server-status" style="color:var(--text-soft)">Checking...</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding-bottom:0.6rem;border-bottom:1px solid var(--border)">
+          <span style="color:var(--text-soft)">Zones</span>
+          <span>12 Active</span>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span style="color:var(--text-soft)">Last Scan</span>
+          <span id="last-scan" style="font-family:'DM Mono',monospace;font-size:0.72rem"></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</main>
+
+<script>
+// ============ CONFIG ============
+let smsConfig = JSON.parse(localStorage.getItem('jr_sms') || 'null');
+let currentAlert = null;
+const API = () => (smsConfig?.url || 'http://localhost:3001');
+
+// ============ NAV ============
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (id === 'areas')   loadZones();
+  if (id === 'alerts')  loadAlerts();
+  if (id === 'reports') loadReports();
+  if (id === 'dashboard') loadDashboard();
+}
+
+// ============ TIME ============
+function updateTime() {
+  const n = new Date();
+  document.getElementById('live-time').textContent = n.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('last-scan').textContent  = n.toLocaleTimeString('en-IN');
+}
+setInterval(updateTime, 1000); updateTime();
+
+function getTimeMode() {
+  const h = new Date().getHours();
+  if (h>=6&&h<12) return 'morning';
+  if (h>=12&&h<21) return 'afternoon';
+  return 'night';
+}
+
+// ============ ZONE DATA (local) ============
+const ZONES = [
+  {name:'Sector 17',  baseline:{morning:45,afternoon:35,night:12}},
+  {name:'Sector 22',  baseline:{morning:55,afternoon:40,night:15}},
+  {name:'Sector 35',  baseline:{morning:38,afternoon:30,night:10}},
+  {name:'Sector 43',  baseline:{morning:42,afternoon:33,night:11}},
+  {name:'Manimajra',  baseline:{morning:60,afternoon:48,night:18}},
+  {name:'Industrial Area',baseline:{morning:90,afternoon:95,night:30}},
+  {name:'Sector 8',   baseline:{morning:35,afternoon:28,night:8}},
+  {name:'Sector 11',  baseline:{morning:40,afternoon:32,night:9}},
+  {name:'Panchkula',  baseline:{morning:50,afternoon:42,night:14}},
+  {name:'Mohali',     baseline:{morning:65,afternoon:55,night:20}},
+  {name:'Sector 26',  baseline:{morning:33,afternoon:27,night:8}},
+  {name:'Sector 30',  baseline:{morning:37,afternoon:30,night:9}},
+];
+
+const MAP_POS = [
+  {name:'Sector 17',  x:120,y:55,w:78,h:65},
+  {name:'Sector 22',  x:208,y:55,w:78,h:65},
+  {name:'Sector 35',  x:120,y:130,w:78,h:65},
+  {name:'Sector 43',  x:208,y:130,w:78,h:65},
+  {name:'Manimajra',  x:296,y:55,w:78,h:65},
+  {name:'Industrial Area',x:296,y:130,w:78,h:65},
+  {name:'Sector 8',   x:32,y:55,w:78,h:65},
+  {name:'Sector 11',  x:32,y:130,w:78,h:65},
+  {name:'Panchkula',  x:385,y:55,w:105,h:65},
+  {name:'Mohali',     x:385,y:130,w:105,h:65},
+  {name:'Sector 26',  x:120,y:205,w:78,h:55},
+  {name:'Sector 30',  x:208,y:205,w:78,h:55},
+];
+
+let localUsage = {}; // zone name → current usage override
+ZONES.forEach(z => { localUsage[z.name] = null; });
+
+// ============ API CALLS ============
+async function apiGet(path) {
+  const res = await fetch(API() + path);
+  return res.json();
+}
+
+async function apiPost(path, body) {
+  const res = await fetch(API() + path, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}
+
+async function apiPatch(path, body) {
+  const res = await fetch(API() + path, {
+    method:'PATCH', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}
+
+// ============ DASHBOARD ============
+async function loadDashboard() {
+  const now = new Date();
+  document.getElementById('dash-sub').textContent =
+    `Chandigarh Municipal Grid — ${now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})}`;
+
+  try {
+    const { stats } = await apiGet('/stats');
+    document.getElementById('s-pending').textContent = stats.pending;
+    document.getElementById('s-solved').textContent  = stats.solved;
+    document.getElementById('s-not').textContent     = stats.not_solved;
+    document.getElementById('s-invalid').textContent = stats.invalid;
+    document.getElementById('s-sms').textContent     = stats.sms_sent;
+    document.getElementById('alert-count').textContent = stats.pending + ' Alerts';
+  } catch(e) {
+    ['s-pending','s-solved','s-not','s-invalid','s-sms'].forEach(id => {
+      document.getElementById(id).textContent = '—';
+    });
+  }
+
+  await loadMiniAlerts();
+  renderZoneBars();
+  renderMap();
+  drawUsageChart();
+}
+
+// ============ MINI ALERTS ============
+async function loadMiniAlerts() {
+  const el = document.getElementById('mini-alerts');
+  try {
+    const { alerts } = await apiGet('/alerts?status=pending');
+    const show = (alerts||[]).slice(0,5);
+    if (!show.length) {
+      el.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-soft);font-size:0.82rem">✓ No active alerts</div>';
+      return;
+    }
+    el.innerHTML = show.map(a => alertRowHTML(a)).join('');
+  } catch(e) {
+    el.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-soft);font-size:0.82rem">Server offline</div>';
+  }
+}
+
+// ============ ALL ALERTS PAGE ============
+async function loadAlerts() {
+  const el = document.getElementById('all-alerts');
+  el.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-soft)">Loading...</div>';
+  const status = document.getElementById('filter-status')?.value || '';
+  try {
+    const { alerts } = await apiGet('/alerts' + (status ? '?status='+status : ''));
+    if (!(alerts||[]).length) {
+      el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-soft);font-size:0.85rem">No alerts found</div>';
+      return;
+    }
+    el.innerHTML = alerts.map(a => alertRowHTML(a)).join('');
+  } catch(e) {
+    el.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--danger)">⚠️ Cannot connect to server. Make sure node server.js is running.</div>';
+  }
+}
+
+function alertRowHTML(a) {
+  const sev = a.severity === 'danger' ? 'danger' : 'warn';
+  const icon = a.severity === 'danger' ? '🚨' : '⚠️';
+  const statusBadge = `<span class="badge badge-${a.status}">${statusLabel(a.status)}</span>`;
+  return `
+    <div class="alert-row ${sev}" onclick='openModal(${JSON.stringify(a)})'>
+      <div class="alert-icon">${icon}</div>
+      <div class="alert-body">
+        <div class="alert-title">${a.severity==='danger'?'CRITICAL':'WARNING'}: ${a.zone} — Abnormal Usage</div>
+        <div class="alert-desc">${a.time_slot} | Detected ${a.detected}L vs baseline ${a.baseline}L (+${a.deviation}%)</div>
+      </div>
+      <div class="alert-right">
+        <div class="alert-time">${a.created_at?.slice(11,16) || ''}</div>
+        ${statusBadge}
+      </div>
+    </div>`;
+}
+
+function statusLabel(s) {
+  return {solved:'✓ Solved', not_solved:'⚠ Not Solved', invalid:'✕ Invalid', pending:'⏳ Pending'}[s] || s;
+}
+
+// ============ MODAL ============
+function openModal(alert) {
+  currentAlert = alert;
+  document.getElementById('modal-title').textContent = `${alert.zone} — ${alert.severity==='danger'?'Critical':'Warning'} Alert`;
+  document.getElementById('modal-time').textContent  = alert.created_at || '';
+
+  document.getElementById('modal-info').innerHTML = `
+    <div class="info-item">
+      <div class="info-label">Zone</div>
+      <div class="info-val">${alert.zone}</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Time Slot</div>
+      <div class="info-val">${alert.time_slot}</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Detected</div>
+      <div class="info-val" style="color:var(--danger)">${alert.detected} L</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Baseline</div>
+      <div class="info-val">${alert.baseline} L</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Deviation</div>
+      <div class="info-val" style="color:var(--warn)">+${alert.deviation}%</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">SMS Sent</div>
+      <div class="info-val">${alert.sms_sent ? '✅ Yes' : '—'}</div>
+    </div>`;
+
+  // Highlight current status btn
+  document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+  const active = document.querySelector(`.sb-${alert.status}`);
+  if (active) active.classList.add('active');
+
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-overlay')) return;
+  document.getElementById('modal-overlay').classList.remove('show');
+  currentAlert = null;
+}
+
+async function updateStatus(status) {
+  if (!currentAlert) return;
+
+  // Highlight button immediately
+  document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.sb-${status}`)?.classList.add('active');
+
+  try {
+    const data = await apiPatch(`/alerts/${currentAlert.id}/status`, { status });
+    if (data.success) {
+      toast('green', '✅ Status Updated', `Alert marked as: ${statusLabel(status)}`);
+      currentAlert.status = status;
+      setTimeout(() => {
+        closeModal();
+        loadDashboard();
+        // Refresh whichever list is active
+        if (document.getElementById('page-alerts').classList.contains('active')) loadAlerts();
+      }, 600);
+    }
+  } catch(e) {
+    toast('danger','❌ Error','Could not update — is server running?');
+  }
+}
+
+// ============ ZONES PAGE ============
+async function loadZones() {
+  const tbody = document.getElementById('zones-tbody');
+  try {
+    const { zones } = await apiGet('/zones');
+    tbody.innerHTML = zones.map(z => `
+      <tr>
+        <td><strong>${z.name}</strong></td>
+        <td style="font-family:'DM Mono',monospace;color:var(--text-soft)">${z.baseline_morning} L</td>
+        <td style="font-family:'DM Mono',monospace;color:var(--text-soft)">${z.baseline_afternoon} L</td>
+        <td style="font-family:'DM Mono',monospace;color:var(--text-soft)">${z.baseline_night} L</td>
+        <td style="font-family:'DM Mono',monospace;color:var(--blue)">${z.current_usage || 0} L</td>
+        <td style="font-size:0.72rem;color:var(--text-soft)">${z.last_updated || '—'}</td>
+      </tr>`).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--danger);padding:2rem">Cannot connect to server</td></tr>';
+  }
+}
+
+// ============ REPORTS PAGE ============
+async function loadReports() {
+  try {
+    const [{ alerts }, { stats }] = await Promise.all([apiGet('/alerts'), apiGet('/stats')]);
+
+    // Summary
+    document.getElementById('report-count').textContent = `${alerts.length} total records`;
+    document.getElementById('report-summary').innerHTML = [
+      ['Total Alerts', stats.total, 'var(--blue)'],
+      ['Pending',      stats.pending, 'var(--danger)'],
+      ['Solved',       stats.solved,  'var(--green)'],
+      ['Not Solved',   stats.not_solved, 'var(--warn)'],
+      ['Invalid',      stats.invalid, 'var(--text-soft)'],
+      ['SMS Sent',     stats.sms_sent, 'var(--blue-mid)'],
+    ].map(([l,v,c]) => `
+      <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border)">
+        <span style="color:var(--text-soft)">${l}</span>
+        <strong style="color:${c}">${v}</strong>
+      </div>`).join('');
+
+    // Table
+    document.getElementById('report-tbody').innerHTML = alerts.map(a => `
+      <tr>
+        <td style="font-family:'DM Mono',monospace;color:var(--text-soft)">#${a.id}</td>
+        <td><strong>${a.zone}</strong></td>
+        <td style="font-family:'DM Mono',monospace;font-size:0.72rem">${a.time_slot}</td>
+        <td style="color:var(--danger);font-family:'DM Mono',monospace">${a.detected}L</td>
+        <td style="color:var(--text-soft);font-family:'DM Mono',monospace">${a.baseline}L</td>
+        <td style="color:var(--warn);font-family:'DM Mono',monospace">+${a.deviation}%</td>
+        <td><span class="badge badge-${a.severity==='danger'?'danger':'warn'}">${a.severity}</span></td>
+        <td><span class="badge badge-${a.status}">${statusLabel(a.status)}</span></td>
+        <td>${a.sms_sent ? '✅' : '—'}</td>
+        <td style="font-size:0.72rem;color:var(--text-soft)">${a.created_at?.slice(0,16)||'—'}</td>
+      </tr>`).join('');
+
+    // Pie-style bar chart
+    drawStatusChart(stats);
+
+  } catch(e) {
+    document.getElementById('report-tbody').innerHTML =
+      '<tr><td colspan="10" style="text-align:center;color:var(--danger);padding:2rem">Server offline</td></tr>';
+  }
+}
+
+function drawStatusChart(stats) {
+  const canvas = document.getElementById('statusChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.parentElement.clientWidth - 40;
+  canvas.width = W; canvas.height = 200;
+  ctx.clearRect(0,0,W,200);
+
+  const data = [
+    { label:'Pending',    val: stats.pending,    color:'#dc2626' },
+    { label:'Solved',     val: stats.solved,     color:'#16a34a' },
+    { label:'Not Solved', val: stats.not_solved, color:'#d97706' },
+    { label:'Invalid',    val: stats.invalid,    color:'#94a3b8' },
+  ];
+
+  const total = data.reduce((s,d) => s+d.val, 0) || 1;
+  const maxVal = Math.max(...data.map(d=>d.val), 1);
+  const barW = (W-60) / data.length;
+
+  data.forEach((d,i) => {
+    const x = 30 + i*barW + barW*0.15;
+    const h = Math.max(((d.val/maxVal)*150), d.val>0?4:0);
+    const y = 170 - h;
+
+    const g = ctx.createLinearGradient(0,y,0,170);
+    g.addColorStop(0, d.color);
+    g.addColorStop(1, d.color+'88');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x,y,barW*0.7,h,4);
+    else ctx.rect(x,y,barW*0.7,h);
+    ctx.fill();
+
+    ctx.fillStyle = '#475569'; ctx.font = '10px DM Sans';
+    ctx.textAlign = 'center';
+    ctx.fillText(d.label, x+barW*0.35, 188);
+    if (d.val > 0) {
+      ctx.fillStyle = d.color; ctx.font = 'bold 12px DM Sans';
+      ctx.fillText(d.val, x+barW*0.35, y-6);
+    }
+  });
+}
+
+// ============ SIMULATE LEAK ============
+async function triggerAnomaly() {
+  const area     = document.getElementById('sim-area').value;
+  const timeSlot = document.getElementById('sim-time').value;
+  const severity = document.getElementById('sim-severity').value;
+
+  const zone = ZONES.find(z => z.name === area);
+  if (!zone) return;
+
+  const timeKey = timeSlot.includes('6AM') ? 'morning' : timeSlot.includes('12PM') ? 'afternoon' : 'night';
+  const base = zone.baseline[timeKey];
+  const mult = severity === 'danger' ? (2.5+Math.random()*0.8) : (1.6+Math.random()*0.3);
+  const detected = Math.round(base * mult);
+  const deviation = Math.round(((detected-base)/base)*100);
+
+  localUsage[area] = detected;
+
+  const payload = {
+    zone: area, time_slot: timeSlot,
+    detected, baseline: base, deviation, severity,
+    to: smsConfig?.to || null
+  };
+
+  try {
+    const data = await apiPost('/alerts', payload);
+    if (data.success) {
+      toast(severity==='danger'?'danger':'warn',
+        severity==='danger'?'🚨 Critical Alert Created':'⚠️ Warning Created',
+        `${area}: ${detected}L detected (+${deviation}%). Alert #${data.alertId} saved to DB.`
+      );
+      if (data.smsSent) {
+        setTimeout(() => toast('blue','📱 SMS Sent!',`Real SMS bheja gaya aapke number pe.`), 800);
+      } else if (smsConfig?.to) {
+        setTimeout(() => toast('warn','📵 SMS Failed','Check server logs for Twilio error.'), 800);
+      }
+      loadDashboard();
+      renderZoneBars();
+      renderMap();
+    }
+  } catch(e) {
+    toast('danger','❌ Server Offline','node server.js chalao terminal mein.');
+  }
+}
+
+// ============ ZONE BARS ============
+function renderZoneBars() {
+  const mode = getTimeMode();
+  const labels = {morning:'Morning Mode',afternoon:'Afternoon Mode',night:'Night Mode'};
+  document.getElementById('zone-mode-label').textContent = labels[mode];
+
+  const container = document.getElementById('zone-bars');
+  container.innerHTML = ZONES.slice(0,7).map(z => {
+    const base = z.baseline[mode];
+    const curr = localUsage[z.name] !== null ? localUsage[z.name] : base + Math.round((Math.random()-0.5)*3);
+    const ratio = curr/base;
+    const status = ratio>=2?'danger':ratio>=1.5?'warn':'normal';
+    const pct = Math.min((curr/(base*2.5))*100,100);
+    return `
+      <div class="zone-item">
+        <div class="zone-row">
+          <span class="zone-name">${z.name}</span>
+          <div class="zone-nums">
+            <span style="color:var(--blue)">${curr}L</span>
+            <span>/ ${base}L</span>
+            <span class="badge badge-${status}">${status==='danger'?'Critical':status==='warn'?'Warning':'Normal'}</span>
+          </div>
+        </div>
+        <div class="bar-track"><div class="bar-fill bar-${status}" style="width:${pct}%"></div></div>
+      </div>`;
+  }).join('');
+}
+
+// ============ MAP ============
+function renderMap() {
+  const svg = document.getElementById('city-map');
+  svg.innerHTML = '';
+  const mode = getTimeMode();
+
+  // Grid
+  for (let x=0;x<500;x+=50){const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',x);l.setAttribute('y1',0);l.setAttribute('x2',x);l.setAttribute('y2',270);l.setAttribute('stroke','#e2e8f0');l.setAttribute('stroke-width','0.5');svg.appendChild(l);}
+  for (let y=0;y<270;y+=50){const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',0);l.setAttribute('y1',y);l.setAttribute('x2',500);l.setAttribute('y2',y);l.setAttribute('stroke','#e2e8f0');l.setAttribute('stroke-width','0.5');svg.appendChild(l);}
+
+  MAP_POS.forEach(pos => {
+    const zone = ZONES.find(z=>z.name===pos.name);
+    if (!zone) return;
+    const base = zone.baseline[mode];
+    const curr = localUsage[pos.name] !== null ? localUsage[pos.name] : base;
+    const ratio = curr/base;
+    const status = ratio>=2?'danger':ratio>=1.5?'warn':'normal';
+    const colors = {normal:'#0d9488',warn:'#d97706',danger:'#dc2626'};
+    const col = colors[status];
+
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.style.cursor = 'pointer';
+
+    const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x',pos.x); rect.setAttribute('y',pos.y);
+    rect.setAttribute('width',pos.w); rect.setAttribute('height',pos.h);
+    rect.setAttribute('rx','8');
+    rect.setAttribute('fill', col+'22');
+    rect.setAttribute('stroke', col);
+    rect.setAttribute('stroke-width', status==='danger'?'2':'1.5');
+
+    const name = document.createElementNS('http://www.w3.org/2000/svg','text');
+    name.setAttribute('x', pos.x+pos.w/2); name.setAttribute('y', pos.y+pos.h/2-7);
+    name.setAttribute('text-anchor','middle'); name.setAttribute('font-size','9');
+    name.setAttribute('fill','#475569'); name.setAttribute('font-family','DM Sans');
+    name.textContent = pos.name;
+
+    const val = document.createElementNS('http://www.w3.org/2000/svg','text');
+    val.setAttribute('x', pos.x+pos.w/2); val.setAttribute('y', pos.y+pos.h/2+9);
+    val.setAttribute('text-anchor','middle'); val.setAttribute('font-size','11');
+    val.setAttribute('font-weight','600'); val.setAttribute('fill', col);
+    val.setAttribute('font-family','DM Mono');
+    val.textContent = curr+'L';
+
+    g.appendChild(rect); g.appendChild(name); g.appendChild(val);
+
+    const tip = document.getElementById('map-tip');
+    g.addEventListener('mouseenter', e=>{
+      const dev = (((curr-base)/base)*100).toFixed(1);
+      tip.innerHTML = `<strong style="color:var(--text)">${pos.name}</strong><br>
+        <span style="color:var(--text-soft);font-size:0.7rem">Now: ${curr}L | Base: ${base}L</span><br>
+        <span style="color:${col};font-size:0.72rem">${dev>0?'+':''}${dev}% deviation</span>`;
+      const mapRect = document.querySelector('.map-wrap').getBoundingClientRect();
+      tip.style.left = Math.min(e.clientX - mapRect.left + 10, 320) + 'px';
+      tip.style.top  = (e.clientY - mapRect.top + 10) + 'px';
+      tip.classList.add('show');
+    });
+    g.addEventListener('mouseleave',()=>tip.classList.remove('show'));
+    svg.appendChild(g);
+  });
+}
+
+// ============ USAGE CHART ============
+function drawUsageChart() {
+  const canvas = document.getElementById('usageChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.parentElement.clientWidth - 40;
+  canvas.width = W; canvas.height = 190;
+
+  const data = [8,6,5,5,7,18,35,42,40,38,32,36,38,35,30,32,35,38,40,42,35,25,18,12];
+  const max = Math.max(...data)*1.2;
+  const pL=40,pB=10,pT=15,pR=10;
+  const cW=W-pL-pR, cH=190-pB-pT;
+
+  ctx.clearRect(0,0,W,190);
+
+  // Grid
+  for(let i=0;i<=4;i++){
+    const y=pT+(cH/4)*i;
+    ctx.beginPath(); ctx.strokeStyle='#e2e8f0'; ctx.lineWidth=0.8;
+    ctx.moveTo(pL,y); ctx.lineTo(W-pR,y); ctx.stroke();
+    ctx.fillStyle='#94a3b8'; ctx.font='9px DM Mono'; ctx.textAlign='right';
+    ctx.fillText(Math.round(max-(max/4)*i), pL-4, y+3);
+  }
+
+  // Fill
+  ctx.beginPath();
+  data.forEach((v,i)=>{
+    const x=pL+(i/23)*cW, y=pT+cH-(v/max)*cH;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.lineTo(pL+cW,pT+cH); ctx.lineTo(pL,pT+cH); ctx.closePath();
+  const g=ctx.createLinearGradient(0,pT,0,190);
+  g.addColorStop(0,'rgba(29,111,164,0.15)'); g.addColorStop(1,'rgba(29,111,164,0)');
+  ctx.fillStyle=g; ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  data.forEach((v,i)=>{
+    const x=pL+(i/23)*cW, y=pT+cH-(v/max)*cH;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle='#1d6fa4'; ctx.lineWidth=2; ctx.stroke();
+
+  // Dots
+  data.forEach((v,i)=>{
+    const x=pL+(i/23)*cW, y=pT+cH-(v/max)*cH;
+    ctx.fillStyle='#1d6fa4'; ctx.beginPath();
+    ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill();
+  });
+}
+
+// ============ SMS CONFIG ============
+function saveSmsConfig() {
+  const to    = document.getElementById('sms-to').value.trim();
+  const sid   = document.getElementById('twilio-sid').value.trim();
+  const token = document.getElementById('twilio-token').value.trim();
+  const from  = document.getElementById('twilio-from').value.trim();
+  const url   = document.getElementById('backend-url').value.trim();
+
+  if (!to||!sid||!token||!from||!url) { toast('warn','⚠️ Missing','Saare fields fill karo.'); return; }
+  if (!to.startsWith('+')) { toast('warn','⚠️ Invalid Number','+91 se shuru karo.'); return; }
+
+  smsConfig = {to,sid,token,from,url};
+  localStorage.setItem('jr_sms', JSON.stringify(smsConfig));
+
+  const badge = document.getElementById('sms-status-badge');
+  badge.textContent = '✅ Configured';
+  badge.className = 'sms-status configured';
+
+  toast('green','✅ Saved',`SMS alerts jaayenge: ${to}`);
+  document.getElementById('sms-log').style.display='block';
+}
+
+async function testSms() {
+  if (!smsConfig) { toast('warn','Not Configured','Pehle config save karo.'); return; }
+  addSmsLog('sending','Sending test SMS...');
+  try {
+    const data = await apiPost('/alerts', {
+      zone:'Test Zone', time_slot:'Test', detected:99,
+      baseline:15, deviation:560, severity:'danger', to:smsConfig.to
+    });
+    if (data.smsSent) addSmsLog('ok','✅ SMS Sent! SID: '+data.smsSid?.slice(-8));
+    else addSmsLog('err','SMS not sent — check Twilio credentials & verified numbers');
+  } catch(e) { addSmsLog('err','Server offline: '+e.message); }
+}
+
+function addSmsLog(type, msg) {
+  const box = document.getElementById('sms-log');
+  const lines = document.getElementById('sms-log-lines');
+  box.style.display='block';
+  const colors={ok:'#4ade80',err:'#f87171',sending:'#60a5fa',info:'#94a3b8'};
+  const now = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const line = document.createElement('div');
+  line.className='sms-log-line';
+  line.style.color=colors[type]||'#94a3b8';
+  line.textContent=`[${now}] ${msg}`;
+  lines.prepend(line);
+}
+
+function loadSmsUI() {
+  if (!smsConfig) return;
+  document.getElementById('sms-to').value      = smsConfig.to||'';
+  document.getElementById('twilio-sid').value   = smsConfig.sid||'';
+  document.getElementById('twilio-token').value = smsConfig.token||'';
+  document.getElementById('twilio-from').value  = smsConfig.from||'';
+  document.getElementById('backend-url').value  = smsConfig.url||'http://localhost:3001';
+  const badge = document.getElementById('sms-status-badge');
+  badge.textContent='✅ Configured'; badge.className='sms-status configured';
+}
+
+// ============ SERVER STATUS CHECK ============
+async function checkServer() {
+  const el = document.getElementById('server-status');
+  try {
+    await apiGet('/');
+    el.textContent='🟢 Online'; el.style.color='var(--green)';
+  } catch(e) {
+    el.textContent='🔴 Offline'; el.style.color='var(--danger)';
+  }
+}
+
+// ============ TOAST ============
+function toast(type, title, msg) {
+  const map={green:'t-green',danger:'t-danger',warn:'t-warn',blue:'t-blue'};
+  const icons={green:'✅',danger:'🚨',warn:'⚠️',blue:'📡'};
+  const el=document.createElement('div');
+  el.className=`toast ${map[type]||'t-blue'}`;
+  el.innerHTML=`<div class="toast-icon">${icons[type]||'ℹ️'}</div>
+    <div><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity 0.4s';setTimeout(()=>el.remove(),400);},4000);
+}
+
+// ============ AUTO REFRESH ============
+setInterval(() => {
+  if (document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
+}, 30000);
+
+// ============ INIT ============
+window.addEventListener('load', () => {
+  loadSmsUI();
+  loadDashboard();
+  checkServer();
+  drawUsageChart();
+});
+
+window.addEventListener('resize', drawUsageChart);
+</script>
+</body>
+</html>
